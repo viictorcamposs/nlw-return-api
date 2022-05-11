@@ -5,8 +5,10 @@ import { routes } from "./routes";
 
 const server = express();
 
-server.use(cors())
-server.use(express.json())
-server.use(routes)
+server.use(cors());
+server.use(express.json());
+server.use(routes);
 
-server.listen(3131, () => console.log("Server running on port 3131"));
+server.listen(process.env.PORT || 3131, () =>
+  console.log("HTTP server running!")
+);
