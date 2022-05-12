@@ -1,27 +1,31 @@
-import express from 'express'
+import express from "express";
 
-import { PrismaFeedbacksRepository } from './repositories/prisma/PrismaFeedbacksRepository';
-import { NodemailerMailAdapter } from './adapters/nodemailer/NodemailerMailAdapter';
-import { SubmitFeedbackUseCase } from './useCases/SubmitFeedbackUseCase';
+import { PrismaFeedbacksRepository } from "./repositories/prisma/PrismaFeedbacksRepository";
+import { NodemailerMailAdapter } from "./adapters/nodemailer/NodemailerMailAdapter";
+import { SubmitFeedbackUseCase } from "./useCases/SubmitFeedbackUseCase";
 
-export const routes = express.Router()
+export const routes = express.Router();
 
-routes.post('/feedbacks', async (req, res) => {
-  const { type, comment, screenshot } = req.body
+routes.post("/feedbacks", async (req, res) => {
+  try {
+    const { type, comment, screenshot } = req.body;
 
-  const nodemailerMailAdapter = new NodemailerMailAdapter()
-  const prismaFeedbacksRepository = new PrismaFeedbacksRepository()
-  
-  const submitFeedbacksUseCase = new SubmitFeedbackUseCase(
-    prismaFeedbacksRepository, 
-    nodemailerMailAdapter
-  )
+    const nodemailerMailAdapter = new NodemailerMailAdapter();
+    const prismaFeedbacksRepository = new PrismaFeedbacksRepository();
 
-  await submitFeedbacksUseCase.execute({
-    type,
-    comment, 
-    screenshot
-  })
+    const submitFeedbacksUseCase = new SubmitFeedbackUseCase(
+      prismaFeedbacksRepository,
+      nodemailerMailAdapter
+    );
 
-  return res.status(201).send()
-})
+    await submitFeedbacksUseCase.execute({
+      type,
+      comment,
+      screenshot,
+    });
+
+    return res.status(201).send();
+  } catch (error) {
+    console.error(error);
+  }
+});
